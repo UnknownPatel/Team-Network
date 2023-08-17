@@ -5,6 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 var domain;
+var subdomain;
+var subId;
 
 const VendorReg = () => {
   const [fullName, setFullName] = useState("");
@@ -12,25 +14,72 @@ const VendorReg = () => {
   const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [panNo, setPanNo] = useState("");
+  const [gstNo, setGstNo] = useState("");
+  const [techStack, setTechStack] = useState("");
   const navigate = useNavigate();
   const [selectPanCard, setSelectedPanCard] = useState("");
   const [selectLicence, setSelectedLicence] = useState("");
   const [selectGST, setSelectedGSTCertificate] = useState("");
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    vendor: {
+      name: fullName,
+      mobile_number: mobileNo,
+      tech_stack: techStack,
+      gst_no: gstNo,
+      pancard_no: panNo,
+    },
+    user: {
+      email: email,
+      password: password,
+      role: "vendor",
+    },
+  });
+
   useEffect(() => {
     const host = window.location.host;
-    domain = host.split(".")[2];
-    console.log(domain);
     const arr = host.split(".").slice(0, host.includes("localhost") ? -1 : -2);
     if (arr.length > 0) {
-      setIsAgencyName(arr[0] === "");
+      subdomain = arr[0];
+      subId = arr[1];
     }
-    // if (arr.length > 0) {
-    //   setIsSuperAdmin(arr[1] === "superadmin");
-    //   setIsStudent(arr[1] === "student");
-    //   setDisabled(arr[1] !== "superadmin");
-    // }
+    console.log(subdomain);
+    console.log(subId);
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("vendor[name]", fullName);
+    formData.append("vendor[mobile_number]", mobileNo);
+    formData.append("vendor[tech_stack]", techStack);
+    formData.append("user[email]", email);
+    formData.append("user[password]", password);
+    formData.append("vendor[gst_no]", gstNo);
+    formData.append("vendor[pancard_no]", panNo);
+    formData.append("vendor[document_pancard]", selectPanCard);
+    formData.append("vendor[document_gst]", selectGST);
+
+    axios
+      .post(`/api/v1/${subId}/vendors`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message, {
+          position: toast.POSITION.BOTTOM_LEFT,
+          theme: "colored",
+        });
+      });
+  };
+
   return (
     <div>
       <div className="font-mono min-h-screen flex items-center justify-center signinimage bg-cover">
@@ -55,8 +104,8 @@ const VendorReg = () => {
                       <input
                         className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                         id="firstName"
-                        // value={formData.concern_person_name}
-                        // onChange={(e) => setFullName(e.target.value)}
+                        value={formData.name}
+                        onChange={(e) => setFullName(e.target.value)}
                         type="text"
                         placeholder="Full Name"
                       />
@@ -71,8 +120,8 @@ const VendorReg = () => {
                       <input
                         className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                         id="mob"
-                        // value={formData.mobile_number}
-                        // onChange={(e) => setMobileNo(e.target.value)}
+                        value={formData.mobile_number}
+                        onChange={(e) => setMobileNo(e.target.value)}
                         type="text"
                         placeholder="Mobile Number"
                       />
@@ -88,8 +137,8 @@ const VendorReg = () => {
                     <input
                       className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                       id="companyName"
-                      // value={formData.agency_name}
-                      // onChange={(e) => setTechStack(e.target.value)}
+                      value={formData.tech_stack}
+                      onChange={(e) => setTechStack(e.target.value)}
                       type="text"
                       placeholder="Tech Stack"
                     />
@@ -105,8 +154,8 @@ const VendorReg = () => {
                       <input
                         className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                         id="email"
-                        // value={formData.email}
-                        // onChange={(e) => setEmail(e.target.value)}
+                        value={formData.email}
+                        onChange={(e) => setEmail(e.target.value)}
                         type="email"
                         placeholder="Enter Email Id"
                       />
@@ -121,10 +170,44 @@ const VendorReg = () => {
                       <input
                         className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                         id="password"
-                        // value={formData.password}
-                        // onChange={(e) => setPassword(e.target.value)}
+                        value={formData.password}
+                        onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         placeholder="******************"
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-4 md:flex md:justify-between">
+                    <div className="mb-4 md:mr-2 md:mb-0 ">
+                      <label
+                        className="block mb-2 text-sm font-bold text-gray-700"
+                        htmlFor="panno"
+                      >
+                        PanCard No:
+                      </label>
+                      <input
+                        className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                        id="panNo"
+                        value={formData.pancard_no}
+                        onChange={(e) => setPanNo(e.target.value)}
+                        type="text"
+                        placeholder="Enter PanCard No"
+                      />
+                    </div>
+                    <div className="md:ml-2">
+                      <label
+                        className="block mb-2 text-sm font-bold text-gray-700"
+                        htmlFor="gst"
+                      >
+                        GST No:
+                      </label>
+                      <input
+                        className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                        id="gstno"
+                        // value={formData.gst_no}
+                        onChange={(e) => setGstNo(e.target.value)}
+                        type="text"
+                        placeholder="Enter GST no."
                       />
                     </div>
                   </div>
@@ -138,8 +221,8 @@ const VendorReg = () => {
                     <input
                       type="file"
                       id="panCard"
-                      // value={formData.document_pancard}
-                      // onChange={(e) => setSelectedPanCard(e.target.files[0])}
+                      value={formData.document_pancard}
+                      onChange={(e) => setSelectedPanCard(e.target.files[0])}
                       className="w-full px-2 py-1 border rounded-lg flex-1"
                     />
                   </div>
@@ -164,7 +247,7 @@ const VendorReg = () => {
                     <button
                       className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
                       type="button"
-                      // onClick={handleSubmit}
+                      onClick={handleSubmit}
                     >
                       Register
                     </button>

@@ -1,9 +1,74 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const VendorOnBoardedResources = () => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("button1");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const [experience, setExperience] = useState("");
+  const [joining, setJoining] = useState("");
+  const [amount, setAmount] = useState("");
+  const [gst, setGst] = useState("");
+  const [dateOfOnBoarding, setDateOfOnBoarding] = useState("");
+  const [contract, setContract] = useState("");
+  const [budget, setBudget] = useState("");
+  const [cv, setCv] = useState("");
+  const [aadhaarcard, setAadhaarcard] = useState("");
+  const [formData, setFormData] = useState({
+    agency: {
+      name: "",
+      email: "",
+      tech_stack: "",
+      experience: "",
+      joining: "",
+      on_bench: false,
+      amount: "",
+      gst: "",
+      date_of_on_boarding: "",
+      contract_period: "",
+      budget: "",
+      upload_cv: "",
+      aadhaarcard: "",
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("developer[name]", name);
+    formData.append("developer[tech_stack]", techStack);
+    formData.append("developer[experience]", experience);
+    formData.append("developer[joining]", joining);
+
+    axios
+      .put(`/api/v1/developers`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          toast.success(response.data.message, {
+            position: toast.POSITION.BOTTOM_LEFT,
+            theme: "colored",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message, {
+          position: toast.POSITION.BOTTOM_LEFT,
+          theme: "colored",
+        });
+      });
+  };
 
   function toggleContent(buttonId) {
     setActiveButton(buttonId);
@@ -149,111 +214,149 @@ const VendorOnBoardedResources = () => {
         >
           <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
             <div className="md:flex">
-              <div className="p-8">
-                <div className="flex ml-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Name Of Developer: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Name of Developer"
-                    />
+              <form>
+                <div className="p-8">
+                  <div className="flex ml-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Name Of Developer: </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Name of Developer"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Tech Stack: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Tech Stack"
-                    />
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Tech Stack: </label>
+                      <input
+                        type="text"
+                        value={formData.tech_stack}
+                        onChange={(e) => setTechStack(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Tech Stack"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Experience: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Experience"
-                    />
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Experience: </label>
+                      <input
+                        type="text"
+                        value={formData.experience}
+                        onChange={(e) => setExperience(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Experience"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Budget: </label>
-                    <select
-                      id="countries"
-                      className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Budget: </label>
+                      <select
+                        id="countries"
+                        value={formData.budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                      >
+                        <option value="select Budget">Select Budget</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="hourly">Hourly</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Amount: </label>
+                      <input
+                        type="text"
+                        value={formData.amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Amount"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">GST: </label>
+                      <input
+                        type="text"
+                        value={formData.gst}
+                        onChange={(e) => setGst(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="GST"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Date Of On Boarding: </label>
+                      <input
+                        type="text"
+                        value={formData.date_of_on_boarding}
+                        onChange={(e) => setDateOfOnBoarding(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Date Of On Boarding"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Contract Period: </label>
+                      <select
+                        id="countries"
+                        value={formData.contract_period}
+                        onChange={(e) => setContract(e.target.value)}
+                        className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                      >
+                        <option value="select">Select Contract Period</option>
+                        <option value="3">3</option>
+                        <option value="6">6</option>
+                        <option value="9">9</option>
+                        <option value="12">12</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Upload CV: </label>
+                      <input
+                        type="file"
+                        value={formData.upload_cv}
+                        onChange={(e) => {
+                          setCv(e.target.files[0]);
+                        }}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Upload Adhar Card: </label>
+                      <input
+                        type="file"
+                        value={formData.aadhaarcard}
+                        onChange={(e) => {
+                          setAadhaarcard(e.target.files[0]);
+                        }}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center mt-5">
+                    <button
+                      type="submit"
+                      onClick={handleSubmit}
+                      className="bg-indigo-500 text-gray-100 p-2 rounded font-semibold  hover:bg-green-700 shadow-md cursor-pointer"
                     >
-                      <option value="monthly">Monthly</option>
-                      <option value="hourly">Hourly</option>
-                    </select>
+                      Submit
+                    </button>
                   </div>
                 </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Amount: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Amount"
-                    />
-                  </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">GST: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="GST"
-                    />
-                  </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Date Of On Boarding: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Date Of On Boarding"
-                    />
-                  </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Contract Period: </label>
-                    <select
-                      id="countries"
-                      className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
-                    >
-                      <option value="3">3</option>
-                      <option value="6">6</option>
-                      <option value="9">9</option>
-                      <option value="12">12</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Upload CV: </label>
-                    <input
-                      type="file"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center mt-5">
-                  <button
-                    type="submit"
-                    className="bg-indigo-500 text-gray-100 p-2 rounded font-semibold  hover:bg-green-700 shadow-md cursor-pointer"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>

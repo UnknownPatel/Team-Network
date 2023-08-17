@@ -112,7 +112,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agencyProfile"
+                href="/agency_onBanch"
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -129,7 +129,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agencyProfile"
+                href="/agency_onBoard"
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -146,7 +146,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agencyProfile"
+                href="#"
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">

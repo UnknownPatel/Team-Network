@@ -37,6 +37,12 @@ const SignInPage = () => {
             theme: "colored",
           });
           navigate("/agencyHomePage");
+        } else if (response.data.role.includes("vendor")) {
+          toast.success("Login Successfully !!", {
+            position: toast.POSITION.BOTTOM_LEFT,
+            theme: "colored",
+          });
+          navigate("/vendor_homePage");
         }
       })
       .catch((err) => {

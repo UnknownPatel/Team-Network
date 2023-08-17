@@ -1,9 +1,64 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const VendorOnBenchResources = () => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("button1");
+  const [name, setName] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const [experience, setExperience] = useState("");
+  const [joining, setJoining] = useState("");
+  const [budget, setBudget] = useState("");
+  const [selectResume, setSelectedResume] = useState("");
+
+  const [formData, setFormData] = useState({
+    agency: {
+      name: "",
+      tech_stack: "",
+      experience: "",
+      joining: "",
+      budget_amount: "",
+      resume: "",
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("developer[name]", name);
+    formData.append("developer[tech_stack]", techStack);
+    formData.append("developer[experience]", experience);
+    formData.append("developer[joining]", joining);
+    formData.append("developer[budget_amount]", budget);
+    formData.append("developer[resume]", selectResume);
+
+    axios
+      .post(`/api/v1/developers`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          toast.success(response.data.message, {
+            position: toast.POSITION.BOTTOM_LEFT,
+            theme: "colored",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message, {
+          position: toast.POSITION.BOTTOM_LEFT,
+          theme: "colored",
+        });
+      });
+  };
 
   function toggleContent(buttonId) {
     setActiveButton(buttonId);
@@ -148,81 +203,100 @@ const VendorOnBenchResources = () => {
           }`}
         >
           <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-            <div className="md:flex">
-              <div className="p-8">
-                <div className="flex ml-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Name Of Developer: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Name of Developer"
-                    />
+            <form>
+              <div className="md:flex">
+                <div className="p-8">
+                  <div className="flex ml-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Name Of Developer: </label>
+                      <input
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        id="firstName"
+                        value={formData.name}
+                        onChange={(e) => setName(e.target.value)}
+                        type="text"
+                        placeholder="Full Name"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Tech Stack: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Tech Stack"
-                    />
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Tech Stack: </label>
+                      <input
+                        type="text"
+                        value={formData.tech_stack}
+                        onChange={(e) => setTechStack(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Tech Stack"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Experience: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Experience"
-                    />
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Experience: </label>
+                      <input
+                        type="text"
+                        value={formData.experience}
+                        onChange={(e) => setExperience(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Experience"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Joining: </label>
-                    <select
-                      id="countries"
-                      className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Joining: </label>
+                      <select
+                        id="countries"
+                        value={formData.joining}
+                        onChange={(e) => setJoining(e.target.value)}
+                        className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                      >
+                        <option value="Select">Select Joining</option>
+                        <option value="immediate">Immediate</option>
+                        <option value="oneWeek">One Week</option>
+                        <option value="15Days">15 Days</option>
+                        <option value="30Days">30 Days</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Budget Amount: </label>
+                      <input
+                        type="text"
+                        value={formData.budget_amount}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Budget Amount"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Upload Resume: </label>
+                      <input
+                        type="file"
+                        value={formData.resume}
+                        onChange={(e) => {
+                          setSelectedResume(e.target.files[0]);
+                        }}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center items-center mt-5">
+                    <button
+                      type="submit"
+                      onClick={handleSubmit}
+                      className="bg-indigo-500  p-2 rounded font-semibold  hover:bg-green-700 shadow-md cursor-pointer"
                     >
-                      <option value="immediate">Immediate</option>
-                      <option value="oneWeek">One Week</option>
-                      <option value="15Days">15 Days</option>
-                      <option value="30Days">30 Days</option>
-                    </select>
+                      Submit
+                    </button>
                   </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Budget Amount: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Budget Amount"
-                    />
-                  </div>
-                </div>
-                <div className="flex ml-2 mt-2">
-                  <div className="flex items-center flex-1">
-                    <label className="flex-1">Upload Resume: </label>
-                    <input
-                      type="file"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center mt-5">
-                  <button
-                    type="submit"
-                    className="bg-indigo-500  p-2 rounded font-semibold  hover:bg-green-700 shadow-md cursor-pointer"
-                  >
-                    Submit
-                  </button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
         {/* 2 */}

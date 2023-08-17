@@ -1,6 +1,22 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const VendorHomePage = () => {
+  const [agencies, setAgencies] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`/api/v1/dashboards`)
+      .then((response) => {
+        const filteredAgencies = response.data.agencies.filter(
+          (agency) => agency.registration === true
+        );
+        console.log(filteredAgencies);
+        setAgencies(filteredAgencies);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <div>
       <section className="body-font">
@@ -38,18 +54,26 @@ const VendorHomePage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap"></td>
-                    <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap"></td>
-                    <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
-                      <button
-                        className="text-green-500 font-semibold"
-                        // onClick={() => handleOpen()}
-                      >
-                        Open
-                      </button>
-                    </td>
-                  </tr>
+                  {agencies.map((agency, index) => {
+                    return (
+                      <tr key={agency.id}>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                          {index + 1}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
+                          {agency.agency_name}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                          <button
+                            className="text-green-500 font-semibold"
+                            // onClick={() => handleOpen()}
+                          >
+                            Open
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
