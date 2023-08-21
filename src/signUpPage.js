@@ -235,7 +235,7 @@ const SignUpPage = () => {
                   <div className="text-center">
                     <a
                       className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800"
-                      href="#"
+                      to="/forgot_pass"
                     >
                       Forgot Password?
                     </a>

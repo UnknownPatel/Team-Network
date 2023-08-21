@@ -99,7 +99,7 @@ const AgencyHomepage = () => {
       {/* Sidebar */}
       <div className="fixed flex flex-col bottom-0 left-0 w-16 md:w-60 bg-indigo-50 h-full border-r">
         <div className="flex items-center justify-center h-14 border-b">
-          <div className="text-white md:text-gray-800">Agency Name</div>
+          <div className="text-white md:text-gray-800">{agency_name}</div>
         </div>
         <div className="overflow-y-auto overflow-x-hidden flex-grow pb-14">
           <ul className="flex flex-col py-4 space-y-1 bottom-buttons">

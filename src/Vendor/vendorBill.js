@@ -66,25 +66,24 @@ const VendorBill = () => {
     setDeveloperId(selectedDev.id);
     setName(selectedDev.name);
     setTechStack(selectedDev.tech_stack);
-    console.log(selectedDev.tech_stack);
     setAgency_id(selectedDev.agency_id);
   };
 
-  const handleAmountChange = (e) => {
-    setAmount(e.target.value);
-  };
+  // const handleAmountChange = (e) => {
+  //   setAmount(e.target.value);
+  // };
 
-  const handleCGSTChange = (e) => {
-    setCGst(e.target.value);
-  };
+  // const handleCGSTChange = (e) => {
+  //   setCGst(e.target.value);
+  // };
 
-  const handleSGSTChange = (e) => {
-    setSGst(e.target.value);
-  };
+  // const handleSGSTChange = (e) => {
+  //   setSGst(e.target.value);
+  // };
 
-  const handleTDSChange = (e) => {
-    setTDS(e.target.value);
-  };
+  // const handleTDSChange = (e) => {
+  //   setTDS(e.target.value);
+  // };
 
   const handleSubmit = (e) => {
     axios

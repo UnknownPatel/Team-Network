@@ -126,7 +126,7 @@ const SignInPage = () => {
                   <div className="text-center">
                     <Link
                       className="inline-block text-sm text-blue-600 align-baseline hover:text-blue-800"
-                      href="#"
+                      to="/forgot_pass"
                     >
                       Forgot Password?
                     </Link>

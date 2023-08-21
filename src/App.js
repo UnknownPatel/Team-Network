@@ -16,6 +16,7 @@ import VendorHomePage from "./Vendor/vendorHomePage";
 import VendorBill from "./Vendor/vendorBill";
 import AdminBill from "./Admin/adminBill";
 import VendorReg from "./Vendor/vendorReg";
+import ForgotPassword from "./forgotPassword";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<SignInPage />} />
           <Route exact path="/signUpPage" element={<SignUpPage />} />
+          <Route exact path="/forgot_pass" element={<ForgotPassword />} />
           <Route
             exact
             path="/superAdminDashboard"
