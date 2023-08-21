@@ -1,9 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const VendorDashboard = () => {
   const navigate = useNavigate();
-
+  const { agencyId } = useParams();
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
@@ -26,7 +26,7 @@ const VendorDashboard = () => {
             </li>
             <li>
               <a
-                href="/vendorDashboard"
+                href={`/vendorDashboard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -43,7 +43,7 @@ const VendorDashboard = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBanch"
+                href={`/vendor_onBanch/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -60,7 +60,7 @@ const VendorDashboard = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBoard"
+                href={`/vendor_onBoard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -77,7 +77,7 @@ const VendorDashboard = () => {
             </li>
             <li>
               <a
-                href="/vendor_bill"
+                href={`/vendor_bill/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">

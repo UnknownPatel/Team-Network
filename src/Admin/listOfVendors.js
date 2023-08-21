@@ -1,11 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const ListOfVendors = () => {
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
+  const { agency_name, agency_id } = useParams();
 
   useEffect(() => {
     axios
@@ -78,7 +79,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agencyHomePage"
+                href={`/${agency_id}/${agency_name}/agencyHomePage`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -95,7 +96,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/listOfVendor"
+                href={`/${agency_id}/${agency_name}/listOfVendor`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -112,7 +113,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agency_onBanch"
+                href={`/${agency_id}/${agency_name}/agency_onBanch`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -129,7 +130,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agency_onBoard"
+                href={`/${agency_id}/${agency_name}/agency_onBoard`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -146,7 +147,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="#"
+                href={`/${agency_id}/${agency_name}/admin_bill`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -163,7 +164,7 @@ const ListOfVendors = () => {
             </li>
             <li>
               <a
-                href="/agencyProfile"
+                href={`/${agency_id}/${agency_name}/agencyProfile`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -240,6 +241,12 @@ const ListOfVendors = () => {
                         scope="col"
                         className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
                       >
+                        Tech Stack
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                      >
                         Action
                       </th>
                     </tr>
@@ -258,6 +265,9 @@ const ListOfVendors = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
                           {vendor.mobile_number}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                          {vendor.tech_stack}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
                           <button

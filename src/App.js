@@ -34,25 +34,53 @@ function App() {
             path="/approvedAgencyList"
             element={<ApprovedAgencyList />}
           />
-          <Route exact path="/agencyHomePage" element={<AgencyHomepage />} />
-          <Route exact path="/listOfVendor" element={<ListOfVendors />} />
-          <Route exact path="/agencyProfile" element={<AgencyProfile />} />
-          <Route exact path="/vendorDashboard" element={<VendorDashboard />} />
-          <Route exact path="/agency_onBanch" element={<OnBanchResources />} />
-          <Route exact path="/agency_onBoard" element={<OnBoardResources />} />
           <Route
             exact
-            path="/vendor_onBanch"
+            path="/:agency_id/:agency_name/agencyHomePage"
+            element={<AgencyHomepage />}
+          />
+          <Route
+            exact
+            path="/:agency_id/:agency_name/listOfVendor"
+            element={<ListOfVendors />}
+          />
+          <Route
+            exact
+            path="/:agency_id/:agency_name/agencyProfile"
+            element={<AgencyProfile />}
+          />
+          <Route
+            exact
+            path="/vendorDashboard/:agencyId"
+            element={<VendorDashboard />}
+          />
+          <Route
+            exact
+            path="/:agency_id/:agency_name/agency_onBanch"
+            element={<OnBanchResources />}
+          />
+          <Route
+            exact
+            path="/:agency_id/:agency_name/agency_onBoard"
+            element={<OnBoardResources />}
+          />
+          <Route
+            exact
+            path="/vendor_onBanch/:agencyId"
             element={<VendorOnBenchResources />}
           />
           <Route
             exact
-            path="/vendor_onBoard"
+            path="/vendor_onBoard/:agencyId"
             element={<VendorOnBoardedResources />}
           />
           <Route exact path="/vendor_homePage" element={<VendorHomePage />} />
-          <Route exact path="/vendor_bill" element={<VendorBill />} />
-          <Route exact path="/admin_bill" element={<AdminBill />} />
+          <Route exact path="/vendor_bill/:agencyId" element={<VendorBill />} />
+          <Route
+            exact
+            path="/:agency_id/:agency_name/admin_bill"
+            element={<AdminBill />}
+          />
           <Route exact path="/vendor_reg" element={<VendorReg />} />
         </Routes>
       </BrowserRouter>

@@ -1,28 +1,44 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const VendorOnBenchResources = () => {
   const navigate = useNavigate();
+  const { agencyId } = useParams();
+  const [listOnBench, setListOnBench] = useState([]);
+
   const [activeButton, setActiveButton] = useState("button1");
   const [name, setName] = useState("");
   const [techStack, setTechStack] = useState("");
   const [experience, setExperience] = useState("");
   const [joining, setJoining] = useState("");
   const [budget, setBudget] = useState("");
+  const [email, setEmail] = useState("");
   const [selectResume, setSelectedResume] = useState("");
 
   const [formData, setFormData] = useState({
-    agency: {
+    developer: {
       name: "",
       tech_stack: "",
       experience: "",
       joining: "",
       budget_amount: "",
       resume: "",
+      email: "",
     },
   });
+
+  useEffect(() => {
+    axios
+      .get(`/api/v1/developers`)
+      .then((response) => {
+        console.log(response);
+        setListOnBench(response.data.on_bench_devloper);
+        console.log(response.data.on_bench_devloper);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,6 +51,7 @@ const VendorOnBenchResources = () => {
     formData.append("developer[joining]", joining);
     formData.append("developer[budget_amount]", budget);
     formData.append("developer[resume]", selectResume);
+    formData.append("developer[email]", email);
 
     axios
       .post(`/api/v1/developers`, formData, {
@@ -49,6 +66,9 @@ const VendorOnBenchResources = () => {
             position: toast.POSITION.BOTTOM_LEFT,
             theme: "colored",
           });
+          setTimeout(() => {
+            window.location.reload(true);
+          }, 3000);
         }
       })
       .catch((err) => {
@@ -86,7 +106,7 @@ const VendorOnBenchResources = () => {
             </li>
             <li>
               <a
-                href="/vendorDashboard"
+                href={`/vendorDashboard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -103,7 +123,7 @@ const VendorOnBenchResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBanch"
+                href={`/vendor_onBanch/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -120,7 +140,7 @@ const VendorOnBenchResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBoard"
+                href={`/vendor_onBoard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -137,7 +157,7 @@ const VendorOnBenchResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_bill"
+                href={`/vendor_bill/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -216,6 +236,18 @@ const VendorOnBenchResources = () => {
                         onChange={(e) => setName(e.target.value)}
                         type="text"
                         placeholder="Full Name"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex ml-2 mt-2">
+                    <div className="flex items-center flex-1">
+                      <label className="flex-1">Enter Email: </label>
+                      <input
+                        type="text"
+                        value={formData.email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-96 form-input border border-gray-400 rounded p-1"
+                        placeholder="Enter Email"
                       />
                     </div>
                   </div>
@@ -306,7 +338,106 @@ const VendorOnBenchResources = () => {
             activeButton === "button2" ? "block" : "hidden"
           }`}
         >
-          <div className="flex ml-2"></div>
+          <div className="flex ml-2">
+            <div
+              id="block_report_viewport"
+              className="flex flex-col mt-2 max-h-fit px-3"
+            >
+              <div>
+                <div id="table-viewport" className="mt-5">
+                  <div className="border rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="sticky top-0 bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                          >
+                            Name
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Tech Stack
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Experience
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Joining
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Email
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Budget
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {listOnBench.map((developer) => (
+                          <tr key={developer.id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {developer.name}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
+                              {developer.tech_stack}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.experience}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.joining}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.email}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.budget_amount}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              <button
+                                className="text-green-500 font-semibold"
+                                // id={"button-agency-" + agency.id}
+                                // onClick={() => handleAccept(agency.id)}
+                              >
+                                Accept
+                              </button>
+                              <button
+                                className="text-red-500 font-semibold ml-5"
+                                // onClick={() => handleDecline(agency.id)}
+                              >
+                                Decline
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

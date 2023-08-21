@@ -1,8 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AgencyProfile = () => {
   const navigate = useNavigate();
+  const { agency_name, agency_id } = useParams();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -26,7 +27,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="/agencyHomePage"
+                href={`/${agency_id}/${agency_name}/agencyHomePage`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -43,7 +44,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="/listOfVendor"
+                href={`/${agency_id}/${agency_name}/listOfVendor`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -60,7 +61,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="/agency_onBanch"
+                href={`/${agency_id}/${agency_name}/agency_onBanch`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -77,7 +78,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="/agency_onBoard"
+                href={`/${agency_id}/${agency_name}/agency_onBoard`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -94,7 +95,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="#"
+                href={`/${agency_id}/${agency_name}/admin_bill`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -111,7 +112,7 @@ const AgencyProfile = () => {
             </li>
             <li>
               <a
-                href="/agencyProfile"
+                href={`/${agency_id}/${agency_name}/agencyProfile`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">

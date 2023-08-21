@@ -7,7 +7,7 @@ import axios from "axios";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-axios.defaults.baseURL = "https://7e0f-122-170-171-136.ngrok-free.app";
+axios.defaults.baseURL = "https://25db-122-170-27-184.ngrok-free.app";
 axios.defaults.headers.common["ngrok-skip-browser-warning"] = true;
 
 // Check if access token exists in local storage

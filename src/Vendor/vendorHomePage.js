@@ -1,8 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const VendorHomePage = () => {
   const [agencies, setAgencies] = useState([]);
+  const viewNav = useNavigate();
+
   useEffect(() => {
     axios
       .get(`/api/v1/dashboards`)
@@ -17,6 +20,14 @@ const VendorHomePage = () => {
         console.log(err);
       });
   }, []);
+
+  const handleOpen = (agencyId) => {
+    // e.preventDefault();
+    // const agency_id = e.target.id;
+    viewNav(`/vendorDashboard/${agencyId}`);
+    console.log(agencyId);
+  };
+
   return (
     <div>
       <section className="body-font">
@@ -66,7 +77,8 @@ const VendorHomePage = () => {
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
                           <button
                             className="text-green-500 font-semibold"
-                            // onClick={() => handleOpen()}
+                            id={agency.id}
+                            onClick={(e) => handleOpen(agency.id)}
                           >
                             Open
                           </button>

@@ -1,9 +1,121 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import BillPopUp from "./billPopUp";
 
 const VendorBill = () => {
   const navigate = useNavigate();
+  const { agencyId } = useParams();
+  const [bills, setBills] = useState([]);
+  const [listOnBoard, setListOnBoard] = useState([]);
+  const [selectedDeveloper, setSelectedDeveloper] = useState(null);
+  const [developerId, setDeveloperId] = useState("");
+  const [agency_id, setAgency_id] = useState("");
   const [activeButton, setActiveButton] = useState("button1");
+  const [name, setName] = useState("");
+  const [techStack, setTechStack] = useState("");
+  const [monthAndYear, setMonthAndYear] = useState("");
+  const [dateOfInvoice, setDateOfInvoice] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [invoiceNo, setInvoiceNo] = useState("");
+  const [workingDays, setWorkingDays] = useState("");
+  const [leaves, setLeaves] = useState("");
+  const [amount, setAmount] = useState("");
+  const [cgst, setCGst] = useState("");
+  const [sgst, setSGst] = useState("");
+  const [tds, setTDS] = useState("");
+  const [payableAmount, setPayableAmount] = useState("");
+
+  const [selectedBill, setSelectedBill] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(`/api/v1/developers`)
+      .then((response) => {
+        console.log(response);
+        const filteredDevelopers = response.data.on_board_developer.filter(
+          (developer) => developer.agency_id === Number(agencyId)
+        );
+        setListOnBoard(filteredDevelopers);
+      })
+      .catch((error) => console.log(error));
+
+    axios
+      .get(`/api/v1/bills`)
+      .then((response) => {
+        console.log(response);
+        setBills(response.data.bills);
+      })
+      .catch((error) => console.log(error));
+
+    const parsedAmount = parseFloat(amount) || 0;
+    const parsedCGst = parseFloat(cgst) || 0;
+    const parsedSGst = parseFloat(sgst) || 0;
+    const parsedTDS = parseFloat(tds) || 0;
+
+    const calculatedPayableAmount =
+      parsedAmount + parsedCGst + parsedSGst - parsedTDS;
+    setPayableAmount(calculatedPayableAmount.toFixed(2));
+  }, [amount, cgst, sgst, tds]);
+
+  const handleNameChange = (e) => {
+    const selectedEmail = e.target.value;
+    const selectedDev = listOnBoard.find((dev) => dev.email === selectedEmail);
+    setSelectedDeveloper(selectedDev);
+    setDeveloperId(selectedDev.id);
+    setName(selectedDev.name);
+    setTechStack(selectedDev.tech_stack);
+    console.log(selectedDev.tech_stack);
+    setAgency_id(selectedDev.agency_id);
+  };
+
+  const handleAmountChange = (e) => {
+    setAmount(e.target.value);
+  };
+
+  const handleCGSTChange = (e) => {
+    setCGst(e.target.value);
+  };
+
+  const handleSGSTChange = (e) => {
+    setSGst(e.target.value);
+  };
+
+  const handleTDSChange = (e) => {
+    setTDS(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    axios
+      .post("/api/v1/bills", {
+        bill: {
+          name: name,
+          tech_stack: techStack,
+          select_duration: monthAndYear,
+          working_days: workingDays,
+          total_leaves: leaves,
+          cgst: cgst,
+          sgst: sgst,
+          tds: tds,
+          invoice_date: dateOfInvoice,
+          invioce_number: invoiceNo,
+          amount: amount,
+          due_date: dueDate,
+          total_amount: payableAmount,
+          agency_id: agency_id,
+        },
+      })
+      .then((responce) => {
+        console.log(responce.data);
+        setTimeout(() => {
+          window.location.reload(true);
+        }, 2000);
+      })
+      .catch(function (err) {
+        console.log(err.message);
+      });
+  };
 
   function toggleContent(buttonId) {
     setActiveButton(buttonId);
@@ -31,7 +143,7 @@ const VendorBill = () => {
             </li>
             <li>
               <a
-                href="/vendorDashboard"
+                href={`/vendorDashboard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -48,7 +160,7 @@ const VendorBill = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBanch"
+                href={`/vendor_onBanch/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -65,7 +177,7 @@ const VendorBill = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBoard"
+                href={`/vendor_onBoard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -82,7 +194,7 @@ const VendorBill = () => {
             </li>
             <li>
               <a
-                href="/vendor_bill"
+                href={`/vendor_bill/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -153,11 +265,21 @@ const VendorBill = () => {
                 <div className="flex ml-2">
                   <div className="flex items-center flex-1">
                     <label className="flex-1">Name Of Developer: </label>
-                    <input
-                      type="text"
+                    <select
                       className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="Name of Developer"
-                    />
+                      onChange={handleNameChange}
+                    >
+                      <option value="Select Examination">
+                        Select Name Of Developer
+                      </option>
+                      {listOnBoard.map((developer_name) => {
+                        return (
+                          <option value={developer_name.email}>
+                            {developer_name.name}, {developer_name.email}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                 </div>
                 <div className="flex ml-2 mt-2">
@@ -165,6 +287,9 @@ const VendorBill = () => {
                     <label className="flex-1">Tech Stack: </label>
                     <input
                       type="text"
+                      value={
+                        selectedDeveloper ? selectedDeveloper.tech_stack : ""
+                      }
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Tech Stack"
                     />
@@ -174,7 +299,8 @@ const VendorBill = () => {
                   <div className="flex items-center flex-1">
                     <label className="flex-1">Selected Month and Year: </label>
                     <input
-                      type="text"
+                      type="date"
+                      onChange={(e) => setMonthAndYear(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Selected Month and Year"
                     />
@@ -184,7 +310,8 @@ const VendorBill = () => {
                   <div className="flex items-center flex-1">
                     <label className="flex-1">Date of Invoice: </label>
                     <input
-                      type="text"
+                      type="date"
+                      onChange={(e) => setDateOfInvoice(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Date Of Invoice"
                     />
@@ -195,6 +322,7 @@ const VendorBill = () => {
                     <label className="flex-1">Invoice Number: </label>
                     <input
                       type="text"
+                      onChange={(e) => setInvoiceNo(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Invoice Number"
                     />
@@ -205,6 +333,7 @@ const VendorBill = () => {
                     <label className="flex-1">No. of Working Days: </label>
                     <input
                       type="text"
+                      onChange={(e) => setWorkingDays(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="No. of Working Days"
                     />
@@ -215,6 +344,7 @@ const VendorBill = () => {
                     <label className="flex-1">Total Leaves: </label>
                     <input
                       type="text"
+                      onChange={(e) => setLeaves(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Total Leaves"
                     />
@@ -225,6 +355,8 @@ const VendorBill = () => {
                     <label className="flex-1">Amount: </label>
                     <input
                       type="text"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Amount"
                     />
@@ -232,12 +364,32 @@ const VendorBill = () => {
                 </div>
                 <div className="flex ml-2 mt-2">
                   <div className="flex items-center flex-1">
-                    <label className="flex-1">GST: </label>
-                    <input
-                      type="text"
-                      className="w-96 form-input border border-gray-400 rounded p-1"
-                      placeholder="GST %"
-                    />
+                    <label className="flex-1">CGST: </label>
+                    <select
+                      id="countries"
+                      value={cgst}
+                      onChange={(e) => setCGst(e.target.value)}
+                      className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                    >
+                      <option value="select">Select CGST</option>
+                      <option value="9">9 %</option>
+                      <option value="18">18 %</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex ml-2 mt-2">
+                  <div className="flex items-center flex-1">
+                    <label className="flex-1">SGST: </label>
+                    <select
+                      id="countries"
+                      value={sgst}
+                      onChange={(e) => setSGst(e.target.value)}
+                      className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                    >
+                      <option value="select">Select SGST</option>
+                      <option value="9">9 %</option>
+                      <option value="18">18 %</option>
+                    </select>
                   </div>
                 </div>
                 <div className="flex ml-2 mt-2">
@@ -245,8 +397,21 @@ const VendorBill = () => {
                     <label className="flex-1">TDS: </label>
                     <input
                       type="text"
+                      value={tds}
+                      onChange={(e) => setTDS(e.target.value)}
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="TDS"
+                    />
+                  </div>
+                </div>
+                <div className="flex ml-2 mt-2">
+                  <div className="flex items-center flex-1">
+                    <label className="flex-1">Due Date: </label>
+                    <input
+                      type="date"
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="w-96 form-input border border-gray-400 rounded p-1"
+                      placeholder="Date Of Invoice"
                     />
                   </div>
                 </div>
@@ -255,6 +420,8 @@ const VendorBill = () => {
                     <label className="flex-1">Payable Amount: </label>
                     <input
                       type="text"
+                      value={payableAmount}
+                      readOnly
                       className="w-96 form-input border border-gray-400 rounded p-1"
                       placeholder="Payable Amount"
                     />
@@ -263,6 +430,7 @@ const VendorBill = () => {
                 <div className="flex justify-center items-center mt-5">
                   <button
                     type="submit"
+                    onClick={handleSubmit}
                     className="bg-indigo-400  p-2 rounded font-semibold  hover:bg-green-700 shadow-md cursor-pointer"
                   >
                     Submit
@@ -279,7 +447,7 @@ const VendorBill = () => {
             activeButton === "button2" ? "block" : "hidden"
           }`}
         >
-          <div className="flex ml-2">
+          <div className="flex ml-2 justify-center">
             <div
               id="block_report_viewport"
               className="flex flex-col mt-2 max-h-fit px-3"
@@ -302,48 +470,7 @@ const VendorBill = () => {
                           >
                             Tech Stack
                           </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            Month and Year
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            Date Of Invoice
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            Working Days
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            Total Leaves
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            Amount
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            GST
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
-                          >
-                            TDS
-                          </th>
+
                           <th
                             scope="col"
                             className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
@@ -356,23 +483,48 @@ const VendorBill = () => {
                           >
                             Status
                           </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Details
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        <tr>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap"></td>
-                          <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap"></td>
-                          <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap"></td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center"></td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
-                            {/* <button
-                              className="text-green-500 font-semibold"
-                              // onClick={() => handleAccept(vendor.id)}
-                            >
-                              Accept
-                            </button> */}
-                          </td>
-                        </tr>
+                        {bills.map((bill) => (
+                          <tr>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {bill.name}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
+                              {bill.tech_stack}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
+                              {bill.total_amount}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {bill.payment_status}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              <button
+                                onClick={() => {
+                                  setSelectedBill(bill);
+                                  setIsPopupOpen(true);
+                                }}
+                                className="mt-2 bg-indigo-500 text-white rounded px-2 py-1"
+                              >
+                                View Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {isPopupOpen && selectedBill && (
+                          <BillPopUp
+                            bill={selectedBill}
+                            onClose={() => setIsPopupOpen(false)}
+                          />
+                        )}
                       </tbody>
                     </table>
                   </div>

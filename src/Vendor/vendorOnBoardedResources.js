@@ -1,10 +1,16 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const VendorOnBoardedResources = () => {
   const navigate = useNavigate();
+  const [listOnBench, setListOnBench] = useState([]);
+  const [listOnBoard, setListOnBoard] = useState([]);
+  const [selectedDeveloper, setSelectedDeveloper] = useState(null);
+  const [developerId, setDeveloperId] = useState("");
+
+  const { agencyId } = useParams();
   const [activeButton, setActiveButton] = useState("button1");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,7 +25,7 @@ const VendorOnBoardedResources = () => {
   const [cv, setCv] = useState("");
   const [aadhaarcard, setAadhaarcard] = useState("");
   const [formData, setFormData] = useState({
-    agency: {
+    developer: {
       name: "",
       email: "",
       tech_stack: "",
@@ -36,29 +42,59 @@ const VendorOnBoardedResources = () => {
     },
   });
 
+  useEffect(() => {
+    axios
+      .get(`/api/v1/developers`)
+      .then((response) => {
+        console.log(response);
+        setListOnBench(response.data.on_bench_devloper);
+        const filteredDevelopers = response.data.on_board_developer.filter(
+          (developer) => developer.agency_id === Number(agencyId)
+        );
+        setListOnBoard(filteredDevelopers);
+        console.log(filteredDevelopers);
+      })
+      .catch((error) => console.log(error));
+
+    // axios
+    //   .get(`/api/v1/developers`)
+    //   .then((response) => {
+    //     console.log(response);
+    //     console.log(response.data.on_board_devloper);
+    //   })
+    //   .catch((error) => console.log(error));
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
 
-    formData.append("developer[name]", name);
-    formData.append("developer[tech_stack]", techStack);
-    formData.append("developer[experience]", experience);
-    formData.append("developer[joining]", joining);
+    formData.append("developer[budget]", budget);
+    formData.append("developer[amount]", amount);
+    formData.append("developer[gst]", gst);
+    formData.append("developer[date_of_on_boarding]", dateOfOnBoarding);
+    formData.append("developer[contract_period]", contract);
+    formData.append("developer[on_bench]", "false");
+    formData.append("developer[upload_cv]", cv);
+    formData.append("developer[aadhaarcard]", aadhaarcard);
+    formData.append("developer[agency_id]", agencyId);
+    // formData.append("developer[]");
 
     axios
-      .put(`/api/v1/developers`, formData, {
+      .put(`/api/v1/developers/${developerId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
         console.log(response);
-        if (response.status === 201) {
+        if (response.status === 200) {
           toast.success(response.data.message, {
             position: toast.POSITION.BOTTOM_LEFT,
             theme: "colored",
           });
+          window.location.reload(true);
         }
       })
       .catch((err) => {
@@ -68,6 +104,13 @@ const VendorOnBoardedResources = () => {
           theme: "colored",
         });
       });
+  };
+
+  const handleNameChange = (e) => {
+    const selectedEmail = e.target.value;
+    const selectedDev = listOnBench.find((dev) => dev.email === selectedEmail);
+    setSelectedDeveloper(selectedDev);
+    setDeveloperId(selectedDev.id);
   };
 
   function toggleContent(buttonId) {
@@ -96,7 +139,7 @@ const VendorOnBoardedResources = () => {
             </li>
             <li>
               <a
-                href="/vendorDashboard"
+                href={`/vendorDashboard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -113,7 +156,7 @@ const VendorOnBoardedResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBanch"
+                href={`/vendor_onBanch/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -130,7 +173,7 @@ const VendorOnBoardedResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_onBoard"
+                href={`/vendor_onBoard/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none bg-indigo-100 hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -147,7 +190,7 @@ const VendorOnBoardedResources = () => {
             </li>
             <li>
               <a
-                href="/vendor_bill"
+                href={`/vendor_bill/${agencyId}`}
                 className="relative flex flex-row items-center h-11 focus:outline-none hover:bg-indigo-200 text-black hover:text-gray-800 border-l-4 border-transparent pr-6"
               >
                 <span className="inline-flex justify-center items-center ml-4">
@@ -219,13 +262,21 @@ const VendorOnBoardedResources = () => {
                   <div className="flex ml-2">
                     <div className="flex items-center flex-1">
                       <label className="flex-1">Name Of Developer: </label>
-                      <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setName(e.target.value)}
+                      <select
                         className="w-96 form-input border border-gray-400 rounded p-1"
-                        placeholder="Name of Developer"
-                      />
+                        onChange={handleNameChange}
+                      >
+                        <option value="Select Examination">
+                          Select Name Of Developer
+                        </option>
+                        {listOnBench.map((developer_name) => {
+                          return (
+                            <option value={developer_name.email}>
+                              {developer_name.name}, {developer_name.email}
+                            </option>
+                          );
+                        })}
+                      </select>
                     </div>
                   </div>
                   <div className="flex ml-2 mt-2">
@@ -233,7 +284,9 @@ const VendorOnBoardedResources = () => {
                       <label className="flex-1">Tech Stack: </label>
                       <input
                         type="text"
-                        value={formData.tech_stack}
+                        value={
+                          selectedDeveloper ? selectedDeveloper.tech_stack : ""
+                        }
                         onChange={(e) => setTechStack(e.target.value)}
                         className="w-96 form-input border border-gray-400 rounded p-1"
                         placeholder="Tech Stack"
@@ -245,7 +298,9 @@ const VendorOnBoardedResources = () => {
                       <label className="flex-1">Experience: </label>
                       <input
                         type="text"
-                        value={formData.experience}
+                        value={
+                          selectedDeveloper ? selectedDeveloper.experience : ""
+                        }
                         onChange={(e) => setExperience(e.target.value)}
                         className="w-96 form-input border border-gray-400 rounded p-1"
                         placeholder="Experience"
@@ -282,20 +337,31 @@ const VendorOnBoardedResources = () => {
                   <div className="flex ml-2 mt-2">
                     <div className="flex items-center flex-1">
                       <label className="flex-1">GST: </label>
-                      <input
+                      <select
+                        id="countries"
+                        value={formData.gst}
+                        onChange={(e) => setGst(e.target.value)}
+                        className=" border border-gray-400  text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-96 p-2.5"
+                      >
+                        <option value="select">Select GST</option>
+                        <option value="0">0</option>
+                        <option value="9">9 %</option>
+                        <option value="18">18 %</option>
+                      </select>
+                      {/* <input
                         type="text"
                         value={formData.gst}
                         onChange={(e) => setGst(e.target.value)}
                         className="w-96 form-input border border-gray-400 rounded p-1"
                         placeholder="GST"
-                      />
+                      /> */}
                     </div>
                   </div>
                   <div className="flex ml-2 mt-2">
                     <div className="flex items-center flex-1">
                       <label className="flex-1">Date Of On Boarding: </label>
                       <input
-                        type="text"
+                        type="date"
                         value={formData.date_of_on_boarding}
                         onChange={(e) => setDateOfOnBoarding(e.target.value)}
                         className="w-96 form-input border border-gray-400 rounded p-1"
@@ -367,7 +433,106 @@ const VendorOnBoardedResources = () => {
             activeButton === "button2" ? "block" : "hidden"
           }`}
         >
-          <div className="flex ml-2"></div>
+          <div className="flex ml-2">
+            <div
+              id="block_report_viewport"
+              className="flex flex-col mt-2 max-h-fit px-3"
+            >
+              <div>
+                <div id="table-viewport" className="mt-5">
+                  <div className="border rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="sticky top-0 bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                          >
+                            Name
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Tech Stack
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Experience
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Joining
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Email
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Budget
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                          >
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {listOnBoard.map((developer) => (
+                          <tr key={developer.id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {developer.name}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
+                              {developer.tech_stack}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.experience}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.joining}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.email}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              {developer.budget_amount}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                              <button
+                                className="text-green-500 font-semibold"
+                                // id={"button-agency-" + agency.id}
+                                // onClick={() => handleAccept(agency.id)}
+                              >
+                                Accept
+                              </button>
+                              <button
+                                className="text-red-500 font-semibold ml-5"
+                                // onClick={() => handleDecline(agency.id)}
+                              >
+                                Decline
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

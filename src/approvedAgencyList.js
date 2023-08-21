@@ -160,6 +160,12 @@ const ApprovedAgencyList = () => {
                         scope="col"
                         className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
                       >
+                        Mobile No
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-center text-gray-500 uppercase "
+                      >
                         Action
                       </th>
                     </tr>
@@ -175,6 +181,9 @@ const ApprovedAgencyList = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
                           {agency.concern_person_name}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
+                          {agency.mobile_number}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap text-center">
                           <button

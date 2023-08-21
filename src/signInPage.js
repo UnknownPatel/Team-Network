@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+var agency_id;
+var agency_name;
+
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +28,9 @@ const SignInPage = () => {
         localStorage.setItem("roles", role);
         const accessToken = response.data.access_token;
         localStorage.setItem("access_token", accessToken);
+
+        console.log(agency_id);
+        console.log(agency_name);
         if (response.data.role.includes("superadmin")) {
           toast.success("Login Successfully !!", {
             position: toast.POSITION.BOTTOM_LEFT,
@@ -32,11 +38,13 @@ const SignInPage = () => {
           });
           navigate("/superAdminDashboard");
         } else if (response.data.role.includes("admin")) {
+          const agency_name = response.data.agency.agency_name;
+          const agency_id = response.data.agency.id;
           toast.success("Login Successfully !!", {
             position: toast.POSITION.BOTTOM_LEFT,
             theme: "colored",
           });
-          navigate("/agencyHomePage");
+          navigate(`/${agency_id}/${agency_name}/agencyHomePage`);
         } else if (response.data.role.includes("vendor")) {
           toast.success("Login Successfully !!", {
             position: toast.POSITION.BOTTOM_LEFT,
