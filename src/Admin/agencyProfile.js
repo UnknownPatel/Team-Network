@@ -1,9 +1,69 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AgencyProfile = () => {
   const navigate = useNavigate();
   const { agency_name, agency_id } = useParams();
+  const [personName, setPersonName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`/api/v1/agencies/${agency_id}`)
+      .then((response) => {
+        const agencyData = response.data.agency;
+
+        // Set state values with API response data
+        setPersonName(agencyData.concern_person_name);
+        setMobileNumber(agencyData.mobile_number);
+        setEmail(agencyData.user.email);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [agency_id]);
+
+  const handleFieldChange = (field, value) => {
+    switch (field) {
+      case "personName":
+        setPersonName(value);
+        break;
+      case "mobileNumber":
+        setMobileNumber(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleProfileUpdate = () => {
+    const updatedData = {
+      concern_person_name: personName,
+      mobile_number: mobileNumber,
+      user: {
+        email: email,
+      },
+    };
+
+    axios
+      .put(`/api/v1/agencies/${agency_id}`, updatedData)
+      .then((response) => {
+        console.log("Profile updated successfully", response);
+        toast.success(response.data.message, {
+          position: toast.POSITION.BOTTOM_LEFT,
+          theme: "colored",
+        });
+      })
+      .catch((err) => {
+        console.log("Error updating profile", err);
+      });
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -151,50 +211,41 @@ const AgencyProfile = () => {
           <p className="bg-indigo-50 p-4">Welcome !!</p>
         </div>
         <div className="text-center text-4xl mt-5">Profile</div>
-        {/* <div className=" mt-5">
-          <div class="flex flex-wrap justify-center">
-            <div class="w-full p-4">
-              <div class="bg-white rounded-lg shadow-md">
-                <div>Concern Person Name:</div>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className="max-w-md mx-auto mt-5 bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
           <div className="md:flex">
             <div className="p-8">
-              <div className="md:flex-shrink-0">
-                <label htmlFor="">Upload Logo:</label>
-                {/* <img
-                className="h-48 w-full object-cover md:w-48"
-                src="upload_logo_url_here"
-                alt="Upload Logo"
-              /> */}
-              </div>
-
               <div className="mt-10 flex  leading-tight text-sm font-semibold">
                 <label htmlFor="" className="flex-1">
-                  personName:
+                  Upload Logo:
                 </label>
+                {/* <img
+                  className="h-48 w-full object-cover md:w-48"
+                  src="upload_logo_url_here"
+                  alt="Upload Logo"
+                /> */}
                 <input
-                  type="text"
-                  name=""
-                  id=""
-                  placeholder="Person Name"
+                  type="file"
+                  // value={formData.logo}
+                  // onChange={(e) => {
+                  //   setLogo(e.target.files[0]);
+                  // }}
                   className="w-80 p-2 ml-2 flex-1 flex rounded-lg bg-gray-200 border focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
-              <div className=" mt-5 text-sm flex leading-tight font-semibold ">
+              <div className="mt-10 flex  leading-tight text-sm font-semibold">
                 <label htmlFor="" className="flex-1">
-                  position:
+                  Concern Person Name:
                 </label>
                 <input
                   type="text"
                   name=""
                   id=""
-                  placeholder="position "
-                  className="w-80 p-2 ml-2 flex  flex-1 rounded-lg bg-gray-200 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                  value={personName}
+                  onChange={(e) =>
+                    handleFieldChange("personName", e.target.value)
+                  }
+                  className="w-80 p-2 ml-2 flex-1 flex rounded-lg bg-gray-200 border focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
               <div className="flex mt-5 text-sm leading-tight font-semibold ">
@@ -205,7 +256,10 @@ const AgencyProfile = () => {
                   type="text"
                   name=""
                   id=""
-                  placeholder="Mobile Number"
+                  value={mobileNumber}
+                  onChange={(e) =>
+                    handleFieldChange("mobileNumber", e.target.value)
+                  }
                   className="w-80 p-2 ml-2 flex flex-1 rounded-lg bg-gray-200 border focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
@@ -217,9 +271,18 @@ const AgencyProfile = () => {
                   type="email"
                   name=""
                   id=""
-                  placeholder="Email Id"
+                  value={email}
+                  onChange={(e) => handleFieldChange("email", e.target.value)}
                   className="w-80 p-2 ml-2 flex flex-1 rounded-lg bg-gray-200 border focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
+              </div>
+              <div className="flex justify-end mt-6 pr-8">
+                <button
+                  onClick={handleProfileUpdate}
+                  className="bg-blue-500 text-white rounded px-4 py-2"
+                >
+                  Update Profile
+                </button>
               </div>
             </div>
           </div>

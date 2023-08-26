@@ -14,6 +14,7 @@ const OnBanchResources = () => {
     localStorage.clear();
     navigate("/");
   };
+
   useEffect(() => {
     axios
       .get(`/api/v1/agencies/${agency_id}/agency_vendors`)

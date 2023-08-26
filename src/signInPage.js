@@ -28,9 +28,6 @@ const SignInPage = () => {
         localStorage.setItem("roles", role);
         const accessToken = response.data.access_token;
         localStorage.setItem("access_token", accessToken);
-
-        console.log(agency_id);
-        console.log(agency_name);
         if (response.data.role.includes("superadmin")) {
           toast.success("Login Successfully !!", {
             position: toast.POSITION.BOTTOM_LEFT,
